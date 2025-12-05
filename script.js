@@ -23,12 +23,10 @@ let jogadorAtual = 'X';
         let deslocamentoX = 0;
         let deslocamentoY = 0;
         
-        
         let nivelZoom = 1.0;
         const ZOOM_MINIMO = 0.5;
         const ZOOM_MAXIMO = 3.0;
         const PASSO_ZOOM = 0.1;
-
         
         const elementoTabuleiroJogo = document.getElementById('tabuleiroJogo');
         const elementoStatusJogo = document.getElementById('statusJogo');
