@@ -1,6 +1,6 @@
-body {
-  zoom: 0.75; /* Define o zoom para 75% */
-}
+  body {
+    zoom: 0.75; 
+  }
 * {
             margin: 0;
             padding: 0;
