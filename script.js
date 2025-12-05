@@ -1,4 +1,5 @@
-let jogadorAtual = 'X';
+
+        let jogadorAtual = 'X';
         let tabuleiroJogo = ['', '', '', '', '', '', '', '', ''];
         let jogoAtivo = true;
         let jogadorEhX = true;
@@ -362,6 +363,12 @@ let jogadorAtual = 'X';
             return obterMelhorJogadaComProfundidade(4);
         }
 
+        
+        function obterMelhorJogada() {
+            return obterMelhorJogadaComProfundidade(9);
+        }
+
+        
         function obterMelhorJogadaComProfundidade(profundidadeBusca) {
             let melhorPontuacao = jogadorAtual === 'O' ? -Infinity : Infinity;
             let melhoresJogadas = [];
@@ -387,7 +394,7 @@ let jogadorAtual = 'X';
                         pontuacao: pontuacao,
                         caminho: resultado.caminho,
                         explorado: true,
-                        ehMelhor: false
+                        ehMelhor: false 
                     });
                     
                     if ((jogadorAtual === 'O' && pontuacao > melhorPontuacao) || 
@@ -444,6 +451,7 @@ let jogadorAtual = 'X';
                     };
                 }
             }
+            
             caminhoSelecionado = melhorCaminho;
             return { 
                 jogada: melhoresJogadas[0], 
@@ -451,6 +459,7 @@ let jogadorAtual = 'X';
                 todosCaminhos: todosCaminhos 
             };
         }
+
         
         function algoritmoMinimax(tabuleiro, profundidade, ehMaximizador, profundidadeMaxima, caminhoAtual) {
             const vencedor = verificarVencedorTabuleiro(tabuleiro);
