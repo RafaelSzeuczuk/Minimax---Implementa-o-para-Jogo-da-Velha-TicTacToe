@@ -362,12 +362,6 @@ let jogadorAtual = 'X';
             return obterMelhorJogadaComProfundidade(4);
         }
 
-        
-        function obterMelhorJogada() {
-            return obterMelhorJogadaComProfundidade(9);
-        }
-
-        
         function obterMelhorJogadaComProfundidade(profundidadeBusca) {
             let melhorPontuacao = jogadorAtual === 'O' ? -Infinity : Infinity;
             let melhoresJogadas = [];
@@ -392,7 +386,8 @@ let jogadorAtual = 'X';
                         jogada: i,
                         pontuacao: pontuacao,
                         caminho: resultado.caminho,
-                        explorado: true
+                        explorado: true,
+                        ehMelhor: false
                     });
                     
                     if ((jogadorAtual === 'O' && pontuacao > melhorPontuacao) || 
@@ -400,16 +395,25 @@ let jogadorAtual = 'X';
                         melhorPontuacao = pontuacao;
                         melhoresJogadas = [i];
                         melhorCaminho = resultado.caminho;
+                        
+                        todosCaminhosResultado[todosCaminhosResultado.length - 1].ehMelhor = true;
+                        
                     } else if (pontuacao === melhorPontuacao) {
                         melhoresJogadas.push(i);
+                        todosCaminhosResultado[todosCaminhosResultado.length - 1].ehMelhor = true;
+                        
                         if (melhoresJogadas.length === 1) {
                             melhorCaminho = resultado.caminho;
-                         }
+                        }
                     }
                 }
             }
             
-            caminhoSelecionado = melhorCaminho;
+            todosCaminhosResultado.forEach(item => {
+                if (melhoresJogadas.includes(item.jogada)) {
+                    item.ehMelhor = true;
+                }
+            });
             
             const todasJogadasPossiveis = [0, 1, 2, 3, 4, 5, 6, 7, 8].filter(i => tabuleiroJogo[i] === '');
             nosFaltantes = todasJogadasPossiveis.filter(jogada => 
@@ -418,14 +422,35 @@ let jogadorAtual = 'X';
                 jogada: jogada,
                 pontuacao: null,
                 caminho: [jogada],
-                explorado: false
+                explorado: false,
+                ehMelhor: false
             }));
             
             todosCaminhos = [...todosCaminhosResultado, ...nosFaltantes];
-        
-            return { jogada: melhoresJogadas[0], caminho: melhorCaminho, todosCaminhos: todosCaminhos };
+            
+            const ordemJogadas = [4, 0, 2, 6, 8, 1, 3, 5, 7];
+            for (const jogada of ordemJogadas) {
+                if (melhoresJogadas.includes(jogada)) {
+                    const caminhoCorreto = todosCaminhosResultado.find(
+                        p => p.jogada === jogada
+                    )?.caminho || melhorCaminho;
+                    
+                    caminhoSelecionado = caminhoCorreto;
+                    
+                    return { 
+                        jogada, 
+                        caminho: caminhoCorreto,  
+                        todosCaminhos: todosCaminhos 
+                    };
+                }
+            }
+            caminhoSelecionado = melhorCaminho;
+            return { 
+                jogada: melhoresJogadas[0], 
+                caminho: melhorCaminho, 
+                todosCaminhos: todosCaminhos 
+            };
         }
-
         
         function algoritmoMinimax(tabuleiro, profundidade, ehMaximizador, profundidadeMaxima, caminhoAtual) {
             const vencedor = verificarVencedorTabuleiro(tabuleiro);
