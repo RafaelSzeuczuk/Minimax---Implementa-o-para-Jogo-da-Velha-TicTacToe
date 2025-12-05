@@ -1,0 +1,633 @@
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            min-width: 1200px;
+            overflow-x: auto;
+        }
+
+        .container {
+            display: flex;
+            max-width: 1800px;
+            margin: 0 auto;
+            gap: 30px;
+            height: 90vh;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e1e5eb;
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+
+        .subtitulo {
+            color: #664;
+            font-size: 1.1rem;
+        }
+
+        .info-curso {
+            margin-top: 10px;
+            color: #34495e;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        /* JOGO - 35% da tela ESQUERDA */
+        .secao-jogo {
+            flex: 0 0 35%;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e1e5eb;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        /* IA - 65% da tela DIREITA */
+        .secao-arvore {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e1e5eb;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .secao-jogo h2, .secao-arvore h2 {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.5rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e1e5eb;
+        }
+
+        .info-jogo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+        }
+
+        .container-status, .container-placar {
+            text-align: center;
+            padding: 8px;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .rotulo-status, .rotulo-placar {
+            font-size: 0.9rem;
+            color: #664;
+            margin-bottom: 5px;
+        }
+
+        .status {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2575fc;
+        }
+
+        .placar {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .seletor-dificuldade {
+            grid-column: span 2;
+            text-align: center;
+            padding: 8px;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .seletor-dificuldade label {
+            display: block;
+            font-size: 0.9rem;
+            color: #664;
+            margin-bottom: 5px;
+        }
+
+        .botoes-dificuldade {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .botao-dificuldade {
+            padding: 6px 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            background: white;
+            color: #664;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .botao-dificuldade.ativo {
+            background: #2575fc;
+            color: white;
+            border-color: #2575fc;
+        }
+
+        .botao-dificuldade:hover:not(.ativo) {
+            border-color: #2575fc;
+            color: #2575fc;
+        }
+
+        .tabuleiro-jogo {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 8px;
+            aspect-ratio: 1;
+            max-width: 280px;
+            min-height: 280px;
+            margin: 0 auto;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 2px solid #dee2e6;
+        }
+
+        .celula {
+            background: white;
+            border: 2px solid #adb5bd;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            aspect-ratio: 1;
+            font-weight: bold;
+        }
+
+        .celula:hover {
+            background: #e7f3ff;
+            transform: scale(1.03);
+            border-color: #2575fc;
+        }
+
+        .celula.x {
+            color: #dc3545;
+        }
+
+        .celula.o {
+            color: #2575fc;
+        }
+
+        .celula.vencedora {
+            background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+            animation: pulsar 0.5s ease-in-out;
+        }
+
+        @keyframes pulsar {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .controles {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .linha-controle {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        button {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(106, 17, 203, 0.2);
+            flex: 1;
+            justify-content: center;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(106, 17, 203, 0.3);
+        }
+
+        button.reiniciar {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        /* ESTILO FORTE PARA TESTE - coloque no início da tag <style> */
+        #botaoFacil.ativo, #botaoMedio.ativo, #botaoImpossivel.ativo {
+            background-color: #2575fc !important;
+            color: white !important;
+            border: 2px solid #2575fc !important;
+            font-weight: bold !important;
+        }        
+
+        .container-arvore {
+            flex: 1;
+            overflow: auto;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            position: relative;
+            min-height: 300px;
+        }
+
+        .wrapper-arvore {
+            min-width: max-content;
+            min-height: max-content;
+            position: relative;
+            padding: 20px;
+        }
+
+        .canvas-arvore {
+            display: block;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .controles-arvore {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding: 12px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+        }
+        
+
+        .controle-profundidade {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rotulo-profundidade {
+            color: #495057;
+            font-weight: bold;
+        }
+
+        .valor-profundidade {
+            color: #2575fc;
+            font-weight: bold;
+            font-size: 1.1rem;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        input[type="range"] {
+            width: 150px;
+            height: 6px;
+            background: #dee2e6;
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #2575fc;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .contador-nos {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .controles-zoom {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 15px;
+        }
+
+        .botao-zoom {
+            background: #6c757d;
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .botao-zoom:hover {
+            background: #5a6268;
+        }
+
+        .nivel-zoom {
+            font-size: 0.9rem;
+            color: #495057;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .legenda {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+        }
+
+        .item-legenda {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cor-legenda {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid transparent;
+        }
+
+        .cor-max {
+            background: rgba(37, 117, 252, 0.2);
+            border-color: #2575fc;
+        }
+
+        .cor-min {
+            background: rgba(220, 53, 69, 0.2);
+            border-color: #dc3545;
+        }
+
+        .cor-atual {
+            background: rgba(40, 167, 69, 0.2);
+            border-color: #28a745;
+        }
+
+        .cor-caminho {
+            background: rgba(155, 89, 182, 0.2);
+            border-color: #9b59b6;
+        }
+
+        .cor-analisando {
+            background: rgba(241, 196, 15, 0.2);
+            border-color: #f1c40f;
+        }
+
+        .cor-explorado {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: #3498db;
+        }
+
+        .texto-legenda {
+            font-size: 0.9rem;
+            color: #495057;
+        }
+
+        .texto-legenda strong {
+            color: #212529;
+        }
+
+        .ia-pensando {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            text-align: center;
+            border: 2px solid #2575fc;
+            width: 220px;
+            display: none;
+            animation: deslizarDireita 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        @keyframes deslizarDireita {
+            from { 
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes aparecer {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .spinner {
+            width: 35px;
+            height: 35px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2575fc;
+            border-radius: 50%;
+            animation: girar 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes girar {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .estatisticas-arvore {
+            display: flex;
+            gap: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .item-estatistica {
+            text-align: center;
+        }
+
+        .valor-estatistica {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2575fc;
+        }
+
+        .rotulo-estatistica {
+            font-size: 0.8rem;
+            color: #664;
+        }
+
+        .dica-scroll {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            animation: quicar 2s infinite;
+            z-index: 50;
+        }
+
+        @keyframes quicar {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .exibicao-caminho-ia {
+            margin-top: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+        }
+
+        .exibicao-caminho-ia strong {
+            display: block;
+            color: #2575fc;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .passos-caminho {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .passo-caminho {
+            padding: 5px 10px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .passo-caminho.atual {
+            background: #2575fc;
+            color: white;
+            border-color: #2575fc;
+        }
+
+        .passo-caminho.futuro {
+            background: #e7f3ff;
+            color: #2575fc;
+        }
+
+        .explicacao-caminho {
+            padding: 8px;
+            background: #fff9e6;
+            border-radius: 5px;
+            border-left: 3px solid #f1c40f;
+            font-size: 0.85rem;
+            color: #856404;
+        }
+
+        .info-caminho {
+            margin-top: 15px;
+            padding: 12px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+            font-size: 0.9rem;
+        }
+
+        .info-caminho strong {
+            color: #9b59b6;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .tabuleiro-jogo {
+                max-width: 280px;
+            }
+            
+            .wrapper-arvore {
+                min-width: 1000px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                min-width: 1200px;
+                overflow-x: auto;
+            }
+            
+            .secao-jogo {
+                min-width: 300px;
+            }
+            
+            .wrapper-arvore {
+                min-width: 1000px;
+            }
+        }

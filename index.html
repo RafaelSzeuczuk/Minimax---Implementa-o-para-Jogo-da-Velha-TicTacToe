@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trabalho Final - Jogo da Velha com IA Minimax</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Trabalho Final - Estrutura de Dados II</h1>
+        <p class="subtitulo">Implementação do Algoritmo Minimax para Jogo da Velha</p>
+        <p class="info-curso">Universidade Estadual do Centro Oeste - Campus Cedeteg<br>
+        Curso de Ciência da Computação</p>
+    </header>
+
+    <div class="container">
+        <!-- JOGO - 35% da tela ESQUERDA -->
+        <div class="secao-jogo">
+            <h2>JOGO DA VELHA</h2>
+            
+            <div class="info-jogo">
+                <div class="container-status">
+                    <div class="rotulo-status">STATUS DO JOGO</div>
+                    <div class="status" id="statusJogo">Sua vez (X)</div>
+                </div>
+                <div class="container-placar">
+                    <div class="rotulo-placar">PLACAR</div>
+                    <div class="placar">IA: <span id="placarIA">0</span> | Você: <span id="placarJogador">0</span></div>
+                </div>
+                <div class="seletor-dificuldade">
+                    <label>DIFICULDADE DA IA</label>
+                    <div class="botoes-dificuldade">
+                        <button id="botaoFacil" class="botao-dificuldade" onclick="definirDificuldade('facil')">FÁCIL</button>
+                        <button id="botaoMedio" class="botao-dificuldade" onclick="definirDificuldade('medio')">MÉDIO</button>
+                        <button id="botaoImpossivel" class="botao-dificuldade ativo" onclick="definirDificuldade('impossivel')">IMPOSSÍVEL</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabuleiro-jogo" id="tabuleiroJogo">
+                <!-- Células serão geradas pelo JavaScript -->
+            </div>
+
+            <div class="controles">
+                <div class="linha-controle">
+                    <button onclick="reiniciarJogo()" class="reiniciar">
+                        Reiniciar Jogo
+                    </button>
+                </div>
+                
+            </div>
+
+            <div class="exibicao-caminho-ia">
+                <strong>Caminho da IA:</strong>
+                <div class="passos-caminho" id="passosCaminho"></div>
+                <div class="explicacao-caminho" id="explicacaoCaminho"></div>
+            </div>
+        </div>
+
+        <!-- IA - 65% da tela DIREITA -->
+        <div class="secao-arvore">
+            <h2>ÁRVORE DE DECISÃO MINIMAX</h2>
+            
+            <div class="controles-arvore">
+                <div class="controle-profundidade">
+                    <span class="rotulo-profundidade">Profundidade:</span>
+                    <input type="range" id="controleProfundidade" min="1" max="9" value="3">
+                    <span class="valor-profundidade" id="valorProfundidade">2</span>
+                </div>
+                <div class="controles-zoom">
+                    <button class="botao-zoom" onclick="diminuirZoom()" title="Diminuir zoom">-</button>
+                    <span class="nivel-zoom" id="nivelZoom">100%</span>
+                    <button class="botao-zoom" onclick="aumentarZoom()" title="Aumentar zoom">+</button>
+                </div>
+                <div class="contador-nos">
+                    Nós analisados: <span id="contadorNos">0</span>
+                </div>
+            </div>
+
+            <div class="container-arvore">
+                <div class="wrapper-arvore">
+                    <canvas id="canvasArvore" class="canvas-arvore"></canvas>
+                    <div class="ia-pensando" id="iaPensando">
+                        <div class="spinner"></div>
+                        IA analisando caminhos...
+                    </div>
+                    <div class="dica-scroll">Use os scrolls para navegar</div>
+                </div>
+            </div>
+
+            <div class="estatisticas-arvore">
+                <div class="item-estatistica">
+                    <div class="valor-estatistica" id="totalNos">0</div>
+                    <div class="rotulo-estatistica">Total de Nós</div>
+                </div>
+                <div class="item-estatistica">
+                    <div class="valor-estatistica" id="profundidadeArvore">0</div>
+                    <div class="rotulo-estatistica">Profundidade Máx</div>
+                </div>
+                <div class="item-estatistica">
+                    <div class="valor-estatistica" id="fatorRamificacao">0.0</div>
+                    <div class="rotulo-estatistica">Fator Ramificação</div>
+                </div>
+                <div class="item-estatistica">
+                    <div class="valor-estatistica" id="tempoAvaliacao">0ms</div>
+                    <div class="rotulo-estatistica">Tempo de Cálculo</div>
+                </div>
+            </div>
+
+            <div class="info-caminho">
+                <strong>Caminho escolhido pela IA:</strong> <span id="caminhoSelecionado">Aguardando análise...</span>
+            </div>
+
+            <div class="legenda">
+                <div class="item-legenda">
+                    <div class="cor-legenda cor-max"></div>
+                    <div class="texto-legenda"><strong>MAX</strong> (IA - O)</div>
+                </div>
+                <div class="item-legenda">
+                    <div class="cor-legenda cor-min"></div>
+                    <div class="texto-legenda"><strong>MIN</strong> (Jogador - X)</div>
+                </div>
+                <div class="item-legenda">
+                    <div class="cor-legenda cor-atual"></div>
+                    <div class="texto-legenda"><strong>Posição Atual</strong></div>
+                </div>
+                <div class="item-legenda">
+                    <div class="cor-legenda cor-caminho"></div>
+                    <div class="texto-legenda"><strong>Caminho Escolhido</strong></div>
+                </div>
+                <div class="item-legenda">
+                    <div class="cor-legenda cor-analisando"></div>
+                    <div class="texto-legenda"><strong>Em Análise</strong></div>
+                </div>
+                <div class="item-legenda">
+                    <div class="cor-legenda cor-explorado"></div>
+                    <div class="texto-legenda"><strong>Explorado</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
