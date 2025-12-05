@@ -66,7 +66,7 @@
             display: flex;
             flex-direction: column;
             overflow-y: auto;
-            min-height:max-content;
+            min-height: 845px;
         }
 
         /* IA - 65% da tela DIREITA */
@@ -282,7 +282,7 @@
             padding: 15px;
             border: 1px solid #dee2e6;
             position: relative;
-            min-height: 355px;
+            min-height: 438px;
         }
 
         .wrapper-arvore {
