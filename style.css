@@ -266,7 +266,6 @@
             background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
         }
 
-        /* ESTILO FORTE PARA TESTE - coloque no início da tag <style> */
         #botaoFacil.ativo, #botaoMedio.ativo, #botaoImpossivel.ativo {
             background-color: #2575fc !important;
             color: white !important;
