@@ -435,8 +435,8 @@
             }));
             
             todosCaminhos = [...todosCaminhosResultado, ...nosFaltantes];
-            
-            const ordemJogadas = [4, 0, 2, 6, 8, 1, 3, 5, 7];
+            //[4, 0, 2, 6, 8, 1, 3, 5, 7];
+            const ordemJogadas = [4];
             for (const jogada of ordemJogadas) {
                 if (melhoresJogadas.includes(jogada)) {
                     const caminhoCorreto = todosCaminhosResultado.find(
