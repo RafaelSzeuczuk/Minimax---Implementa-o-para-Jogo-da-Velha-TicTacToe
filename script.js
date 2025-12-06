@@ -368,6 +368,25 @@
             return obterMelhorJogadaComProfundidade(9);
         }
 
+        function contarAmeacasDuplas(tabuleiro, jogador) {
+            const linhas = [
+                [0,1,2], [3,4,5], [6,7,8],
+                [0,3,6], [1,4,7], [2,5,8],
+                [0,4,8], [2,4,6]
+            ];
+            let contagem = 0;
+            for (const linha of linhas) {
+                const [a,b,c] = linha;
+                const valores = [tabuleiro[a], tabuleiro[b], tabuleiro[c]];
+                const countJ = valores.filter(v => v === jogador).length;
+                const countVazio = valores.filter(v => v === '').length;
+                if (countJ === 2 && countVazio === 1) {
+                    contagem++;
+                }
+            }
+            return contagem;
+        }
+
 
         function obterMelhorJogadaComProfundidade(profundidadeBusca) {
             
@@ -434,8 +453,6 @@
                 ehMelhor: false
             }));
             
-            todosCaminhos = [...todosCaminhosResultado, ...nosFaltantes];
-            //[4, 0, 2, 6, 8, 1, 3, 5, 7];
             const ordemJogadas = [4];
             for (const jogada of ordemJogadas) {
                 if (melhoresJogadas.includes(jogada)) {
@@ -451,6 +468,28 @@
                         todosCaminhos: todosCaminhos 
                     };
                 }
+            }
+
+            if (melhoresJogadas.length > 1 && jogadorAtual === 'O') {
+                let melhorJogadaFinal = melhoresJogadas[0];
+                let melhorAmeacas = -Infinity;
+
+                for (const jogada of melhoresJogadas) {
+                    const tabuleiroTeste = [...tabuleiroJogo];
+                    tabuleiroTeste[jogada] = 'O';
+                    const ameacas = contarAmeacasDuplas(tabuleiroTeste, 'O');
+                    if (ameacas > melhorAmeacas) {
+                        melhorAmeacas = ameacas;
+                        melhorJogadaFinal = jogada;
+                    }
+                }
+
+                caminhoSelecionado = todosCaminhosResultado.find(p => p.jogada === melhorJogadaFinal)?.caminho || melhorCaminho;
+                return {
+                    jogada: melhorJogadaFinal,
+                    caminho: caminhoSelecionado,
+                    todosCaminhos: todosCaminhos
+                };
             }
             
             caminhoSelecionado = melhorCaminho;
