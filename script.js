@@ -368,96 +368,102 @@
             return obterMelhorJogadaComProfundidade(9);
         }
 
-        
         function obterMelhorJogadaComProfundidade(profundidadeBusca) {
             let melhorPontuacao = jogadorAtual === 'O' ? -Infinity : Infinity;
             let melhoresJogadas = [];
             let melhorCaminho = [];
             let todosCaminhosResultado = [];
-            
-            if (tabuleiroJogo.every(celula => celula === '') && jogadorAtual === 'O') {
-                caminhoSelecionado = [4];
-                return { jogada: 4, caminho: [4], todosCaminhos: [[4]] };
-            }
-            
+        
             for (let i = 0; i < tabuleiroJogo.length; i++) {
                 if (tabuleiroJogo[i] === '') {
                     tabuleiroJogo[i] = jogadorAtual;
-                    const resultado = algoritmoMinimax(tabuleiroJogo, 0, jogadorAtual === 'O' ? false : true, profundidadeBusca, [i]);
+                    const resultado = algoritmoMinimax(
+                        tabuleiroJogo,
+                        0,
+                        jogadorAtual === 'O' ? false : true,
+                        profundidadeBusca,
+                        [i]
+                    );
                     tabuleiroJogo[i] = '';
                     nosAnalisados++;
-                    
+        
                     const pontuacao = resultado.pontuacao;
-                    
+        
                     todosCaminhosResultado.push({
                         jogada: i,
-                        pontuacao: pontuacao,
+                        pontuacao,
                         caminho: resultado.caminho,
                         explorado: true,
-                        ehMelhor: false 
+                        ehMelhor: false
                     });
-                    
-                    if ((jogadorAtual === 'O' && pontuacao > melhorPontuacao) || 
+        
+                    if ((jogadorAtual === 'O' && pontuacao > melhorPontuacao) ||
                         (jogadorAtual === 'X' && pontuacao < melhorPontuacao)) {
                         melhorPontuacao = pontuacao;
                         melhoresJogadas = [i];
                         melhorCaminho = resultado.caminho;
-                        
-                        todosCaminhosResultado[todosCaminhosResultado.length - 1].ehMelhor = true;
-                        
                     } else if (pontuacao === melhorPontuacao) {
                         melhoresJogadas.push(i);
-                        todosCaminhosResultado[todosCaminhosResultado.length - 1].ehMelhor = true;
-                        
-                        if (melhoresJogadas.length === 1) {
-                            melhorCaminho = resultado.caminho;
-                        }
                     }
                 }
             }
-            
+        
             todosCaminhosResultado.forEach(item => {
                 if (melhoresJogadas.includes(item.jogada)) {
                     item.ehMelhor = true;
                 }
             });
-            
-            const todasJogadasPossiveis = [0, 1, 2, 3, 4, 5, 6, 7, 8].filter(i => tabuleiroJogo[i] === '');
-            nosFaltantes = todasJogadasPossiveis.filter(jogada => 
+        
+            const todasJogadasPossiveis = [0,1,2,3,4,5,6,7,8].filter(i => tabuleiroJogo[i] === '');
+            nosFaltantes = todasJogadasPossiveis.filter(jogada =>
                 !todosCaminhosResultado.some(p => p.jogada === jogada)
             ).map(jogada => ({
-                jogada: jogada,
+                jogada,
                 pontuacao: null,
                 caminho: [jogada],
                 explorado: false,
                 ehMelhor: false
             }));
-            
-            todosCaminhos = [...todosCaminhosResultado, ...nosFaltantes];
-            
-            const ordemJogadas = [4, 0, 2, 6, 8, 1, 3, 5, 7];
-            for (const jogada of ordemJogadas) {
-                if (melhoresJogadas.includes(jogada)) {
-                    const caminhoCorreto = todosCaminhosResultado.find(
-                        p => p.jogada === jogada
-                    )?.caminho || melhorCaminho;
-                    
-                    caminhoSelecionado = caminhoCorreto;
-                    
-                    return { 
-                        jogada, 
-                        caminho: caminhoCorreto,  
-                        todosCaminhos: todosCaminhos 
-                    };
-                }
+        
+            const todosCaminhos = [...todosCaminhosResultado, ...nosFaltantes];
+        
+            const jogadaVencedora = melhoresJogadas.find(j => {
+                const r = todosCaminhosResultado.find(p => p.jogada === j);
+                return r && (
+                    (jogadorAtual === 'O' && r.pontuacao >= 9) ||
+                    (jogadorAtual === 'X' && r.pontuacao <= -9)
+                );
+            });
+            if (jogadaVencedora !== undefined) {
+                const caminhoCorreto = todosCaminhosResultado.find(p => p.jogada === jogadaVencedora)?.caminho || melhorCaminho;
+                caminhoSelecionado = caminhoCorreto;
+                return { jogada: jogadaVencedora, caminho: caminhoCorreto, todosCaminhos };
             }
-            
+        
+            if (melhoresJogadas.length > 1) {
+                if (melhoresJogadas.includes(4)) {
+                    const caminhoCorreto = todosCaminhosResultado.find(p => p.jogada === 4)?.caminho || melhorCaminho;
+                    caminhoSelecionado = caminhoCorreto;
+                    return { jogada: 4, caminho: caminhoCorreto, todosCaminhos };
+                }
+                const ofensivas = melhoresJogadas.filter(j => {
+                    const caminho = todosCaminhosResultado.find(p => p.jogada === j);
+                    return caminho && caminho.pontuacao > 0;
+                });
+                if (ofensivas.length > 0) {
+                    const jogada = ofensivas[0];
+                    const caminhoCorreto = todosCaminhosResultado.find(p => p.jogada === jogada)?.caminho || melhorCaminho;
+                    caminhoSelecionado = caminhoCorreto;
+                    return { jogada, caminho: caminhoCorreto, todosCaminhos };
+                }
+                const jogada = melhoresJogadas[0];
+                const caminhoCorreto = todosCaminhosResultado.find(p => p.jogada === jogada)?.caminho || melhorCaminho;
+                caminhoSelecionado = caminhoCorreto;
+                return { jogada, caminho: caminhoCorreto, todosCaminhos };
+            }
+        
             caminhoSelecionado = melhorCaminho;
-            return { 
-                jogada: melhoresJogadas[0], 
-                caminho: melhorCaminho, 
-                todosCaminhos: todosCaminhos 
-            };
+            return { jogada: melhoresJogadas[0], caminho: melhorCaminho, todosCaminhos };
         }
 
         
